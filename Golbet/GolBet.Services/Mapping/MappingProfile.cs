@@ -11,5 +11,10 @@ public class MappingProfile : Profile
     {
         // El aplanamiento extrae automáticamente Match.HomeTeam.Name hacia MatchDto.HomeTeamName
         CreateMap<Match, MatchDto>();
+
+        // Mapeo explícito para el detalle del partido
+        CreateMap<Match, MatchDetailDto>()
+            .ForMember(dto => dto.TotalBets,
+                options => options.MapFrom(match => match.Bets.Count));
     }
 }

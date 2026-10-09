@@ -9,6 +9,28 @@
 
 <h2 class="mb-4">⚽ Cartelera de partidos</h2>
 
+@{
+    var current = (MatchStatus?)ViewBag.CurrentStatus;
+}
+<div class="d-flex gap-2 flex-wrap mb-4">
+    <a asp-action="Index"
+       class="btn btn-sm @(current is null ? "btn-success" : "btn-outline-success")">
+        Todos
+    </a>
+    <a asp-action="Index" asp-route-status="@MatchStatus.Scheduled"
+       class="btn btn-sm @(current == MatchStatus.Scheduled ? "btn-success" : "btn-outline-success")">
+        Programados
+    </a>
+    <a asp-action="Index" asp-route-status="@MatchStatus.InProgress"
+       class="btn btn-sm @(current == MatchStatus.InProgress ? "btn-success" : "btn-outline-success")">
+        En juego
+    </a>
+    <a asp-action="Index" asp-route-status="@MatchStatus.Finished"
+       class="btn btn-sm @(current == MatchStatus.Finished ? "btn-success" : "btn-outline-success")">
+        Finalizados
+    </a>
+</div>
+
 <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
     @foreach (var match in Model)
     {
@@ -57,6 +79,10 @@
                 </div>
                 <div class="card-footer">
                     <div class="row g-2 text-center">
+                        <a asp-action="Detail" asp-route-id="@match.Id"
+                           class="btn btn-sm btn-outline-secondary w-100 mt-2">
+                            Ver detalle
+                        </a>
                         <div class="col">
                             <div class="border rounded py-1">
                                 <small class="text-muted d-block">1 · Local</small>

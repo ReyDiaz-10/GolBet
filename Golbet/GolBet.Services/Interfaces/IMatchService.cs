@@ -6,5 +6,6 @@ namespace GolBet.Services.Interfaces;
 
 public interface IMatchService
 {
+    Task<MatchDetailDto?> GetDetailAsync(int id);
     Task<IEnumerable<MatchDto>> GetBoardAsync(MatchStatus? status = null);
 }
