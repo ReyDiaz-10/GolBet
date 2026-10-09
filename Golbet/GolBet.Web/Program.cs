@@ -5,6 +5,11 @@ using GolBet.Repositories.Interfaces;
 using GolBet.Services.Implementations;
 using GolBet.Services.Interfaces;
 using GolBet.Services.Mapping;
+using System.Globalization;
+
+var culture = new CultureInfo("es-CO");
+CultureInfo.DefaultThreadCurrentCulture = culture;
+CultureInfo.DefaultThreadCurrentUICulture = culture;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
@@ -21,6 +26,8 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 // Servicios de negocio
 builder.Services.AddScoped<IMatchService, MatchService>();
+
+builder.Services.AddScoped<ITeamService, TeamService>();
 
 // Repositorios específicos
 builder.Services.AddScoped<IMatchRepository, MatchRepository>();
