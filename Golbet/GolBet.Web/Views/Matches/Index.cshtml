@@ -3,6 +3,7 @@
 @using GolBet.Web.Helpers
 @model IEnumerable<GolBet.Services.DTOs.MatchDto>
 
+
 @{
     ViewData["Title"] = "Partidos";
 }
@@ -10,9 +11,11 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>⚽ Cartelera de partidos</h2>
-    <a asp-action="Create" class="btn btn-success">+ Nuevo partido</a>
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-action="Create" class="btn btn-success">+ Nuevo partido</a>
+    }
 </div>
-
 
 @{
     var current = (MatchStatus?)ViewBag.CurrentStatus;

@@ -2,9 +2,12 @@
 using GolBet.Services.DTOs;
 using GolBet.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using GolBet.Repositories.Data;
 
 namespace GolBet.Web.Controllers;
 
+[Authorize(Roles = DbSeeder.AdminRole)]
 public class TeamsController : Controller
 {
     private readonly ITeamService _teamService;
