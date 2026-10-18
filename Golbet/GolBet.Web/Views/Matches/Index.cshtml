@@ -11,6 +11,16 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>⚽ Cartelera de partidos</h2>
+
+    <form method="get" asp-action="Index" class="mb-4 d-flex gap-2 col-md-6">
+        <!-- Mantiene el filtro de estado activo al buscar -->
+        <input type="hidden" name="status" value="@ViewBag.CurrentStatus" />
+
+        <!-- Muestra el texto buscado usando el ViewBag -->
+        <input type="text" name="search" value="@ViewBag.CurrentSearch" class="form-control" placeholder="Buscar equipo..." />
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+
     @if (User.IsInRole("Admin"))
     {
         <a asp-action="Create" class="btn btn-success">+ Nuevo partido</a>
@@ -21,23 +31,34 @@
     var current = (MatchStatus?)ViewBag.CurrentStatus;
 }
 <div class="d-flex gap-2 flex-wrap mb-4">
-    <a asp-action="Index"
+    <a asp-action="Index"asp-route-search="@ViewBag.CurrentSearch"
        class="btn btn-sm @(current is null ? "btn-success" : "btn-outline-success")">
         Todos
     </a>
-    <a asp-action="Index" asp-route-status="@MatchStatus.Scheduled"
+    <a asp-action="Index" asp-route-status="@MatchStatus.Scheduled" asp-route-search="@ViewBag.CurrentSearch"
        class="btn btn-sm @(current == MatchStatus.Scheduled ? "btn-success" : "btn-outline-success")">
         Programados
     </a>
-    <a asp-action="Index" asp-route-status="@MatchStatus.InProgress"
+    <a asp-action="Index" asp-route-status="@MatchStatus.InProgress" asp-route-search="@ViewBag.CurrentSearch"
        class="btn btn-sm @(current == MatchStatus.InProgress ? "btn-success" : "btn-outline-success")">
         En juego
     </a>
-    <a asp-action="Index" asp-route-status="@MatchStatus.Finished"
+    <a asp-action="Index" asp-route-status="@MatchStatus.Finished" asp-route-search="@ViewBag.CurrentSearch"
        class="btn btn-sm @(current == MatchStatus.Finished ? "btn-success" : "btn-outline-success")">
         Finalizados
     </a>
 </div>
+
+@if (!Model.Any())
+{
+    <div class="text-center py-5">
+        <h3>No hay partidos para "@ViewBag.CurrentSearch"</h3>
+        <p class="text-muted">Intenta con otro equipo o limpia los filtros.</p>
+        <a asp-action="Index" class="btn btn-outline-secondary mt-3">Volver a la cartelera de partidos</a>
+    </div>
+}
+else
+{
 
 <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
     @foreach (var match in Model)
@@ -115,3 +136,4 @@
         </div>
     }
 </div>
+}

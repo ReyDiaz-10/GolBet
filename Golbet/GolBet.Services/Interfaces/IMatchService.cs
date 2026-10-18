@@ -9,7 +9,7 @@ public interface IMatchService
     /// <summary>
     /// Obtiene la cartelera de partidos activos, opcionalmente filtrada por estado.
     /// </summary>
-    Task<IEnumerable<MatchDto>> GetBoardAsync(MatchStatus? status = null);
+    Task<IEnumerable<MatchDto>> GetBoardAsync(MatchStatus? status = null, string? search = null);
 
     /// <summary>
     /// Obtiene el detalle completo de un partido por su identificador.
