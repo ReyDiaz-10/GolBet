@@ -14,6 +14,7 @@
   <ItemGroup>
     <Folder Include="Helpers\" />
     <Folder Include="Views\Account\" />
+    <Folder Include="Views\Bets\" />
     <Folder Include="Views\Teams\" />
   </ItemGroup>
 

@@ -13,6 +13,10 @@ using GolBet.Services.Mapping;
 
 // 1. Configuración de Cultura (Módulo 6: Todo en español Colombia)
 var culture = new CultureInfo("es-CO");
+// Dates in Spanish; numbers neutral so model binding reads "2.5" correctly
+culture.NumberFormat = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+culture.NumberFormat.NumberGroupSeparator = "";   // "2,5" fails loudly, never binds as 25
+
 CultureInfo.DefaultThreadCurrentCulture = culture;
 CultureInfo.DefaultThreadCurrentUICulture = culture;
 
@@ -48,6 +52,8 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 // Repositorios específicos
 builder.Services.AddScoped<IMatchRepository, MatchRepository>();
+builder.Services.AddScoped<IBetRepository, BetRepository>();
+builder.Services.AddScoped<IBetService, BetService>();
 
 // 6. Registrar AutoMapper (Módulo 4)
 builder.Services.AddAutoMapper(typeof(MappingProfile));

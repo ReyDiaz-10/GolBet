@@ -42,10 +42,16 @@
                     </ul>
                 <div class="collapse navbar-collapse" id="navbarMain">
                     <ul class="navbar-nav me-auto">
-                        <!-- Tus enlaces actuales de Inicio, Partidos, Equipos... -->
+                        @if (User.IsInRole("Apostador"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Bets" asp-action="MyBets">Mis apuestas</a>
+                            </li>
+                        }
+                        
                     </ul>
     
-                        <partial name="_LoginPartial" /> <!-- AGREGA ESTA LÍNEA AQUÍ -->
+                        <partial name="_LoginPartial" /> 
                 </div>
                 </div>
             </div>
@@ -53,10 +59,10 @@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
-            @if (TempData["Success"] is string message)
+            @if (TempData["Error"] is string errorMessage)
             {
-                <div class="alert alert-success alert-dismissible fade show">
-                    ✅ @message
+                <div class="alert alert-danger alert-dismissible fade show">
+                    ⚠️ @errorMessage
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             }
