@@ -12,12 +12,78 @@ namespace GolBet.Services.Implementations;
 public class MatchService : IMatchService
 {
     private readonly IMatchRepository _matchRepository;
+    private readonly IBetRepository _betRepository;
     private readonly IMapper _mapper;
 
-    public MatchService(IMatchRepository matchRepository, IMapper mapper)
+    private static BetPick GetWinningPick(int homeGoals, int awayGoals)
+    => homeGoals > awayGoals ? BetPick.Home
+     : homeGoals < awayGoals ? BetPick.Away
+     : BetPick.Draw;
+
+
+    public MatchService(
+    IMatchRepository matchRepository,
+    IBetRepository betRepository,
+    IMapper mapper)
     {
         _matchRepository = matchRepository;
+        _betRepository = betRepository;
         _mapper = mapper;
+    }
+    public async Task StartMatchAsync(int id)
+    {
+        var match = await _matchRepository.GetByIdAsync(id)
+            ?? throw new KeyNotFoundException($"Match {id} not found.");
+
+        if (match.Status != MatchStatus.Scheduled)
+            throw new InvalidOperationException(
+                "Solo un partido programado puede iniciarse.");
+
+        match.Status = MatchStatus.InProgress;
+        await _matchRepository.UpdateAsync(match);
+    }
+
+    public async Task<ResolutionSummaryDto> CloseMatchAsync(MatchResultFormDto dto)
+    {
+        var match = await _matchRepository.GetByIdAsync(dto.MatchId)
+            ?? throw new KeyNotFoundException($"Match {dto.MatchId} not found.");
+
+        if (match.Status == MatchStatus.Finished)
+            throw new InvalidOperationException(
+                "Este partido ya fue cerrado y sus apuestas resueltas.");
+
+        if (match.Status != MatchStatus.InProgress)
+            throw new InvalidOperationException(
+                "El partido debe estar «En juego» para cerrarse. Inícialo primero.");
+
+        match.HomeGoals = dto.HomeGoals;
+        match.AwayGoals = dto.AwayGoals;
+        match.Status = MatchStatus.Finished;
+
+        var winningPick = GetWinningPick(dto.HomeGoals, dto.AwayGoals);
+
+        var pendingBets = await _betRepository.GetPendingByMatchAsync(match.Id);
+        var summary = new ResolutionSummaryDto { ResolvedBets = pendingBets.Count };
+
+        foreach (var bet in pendingBets)
+        {
+            if (bet.Pick == winningPick)
+            {
+                bet.Status = BetStatus.Won;
+                var payout = bet.Amount * bet.OddsAtPlacement;
+                bet.User.Balance += payout;
+                summary.WonBets++;
+                summary.TotalPaid += payout;
+            }
+            else
+            {
+                bet.Status = BetStatus.Lost;
+            }
+        }
+
+        await _matchRepository.UpdateAsync(match);
+
+        return summary;
     }
 
     public async Task<IEnumerable<MatchDto>> GetBoardAsync(MatchStatus? status = null, string? search = null)

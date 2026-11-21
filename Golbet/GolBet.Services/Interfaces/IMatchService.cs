@@ -11,6 +11,9 @@ public interface IMatchService
     /// </summary>
     Task<IEnumerable<MatchDto>> GetBoardAsync(MatchStatus? status = null, string? search = null);
 
+    Task StartMatchAsync(int id);
+    Task<ResolutionSummaryDto> CloseMatchAsync(MatchResultFormDto dto);
+
     /// <summary>
     /// Obtiene el detalle completo de un partido por su identificador.
     /// </summary>

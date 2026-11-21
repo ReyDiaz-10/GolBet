@@ -1,4 +1,4 @@
-using GolBet.Services.DTOs;
+﻿using GolBet.Services.DTOs;
 
 namespace GolBet.Services.Interfaces;
 
